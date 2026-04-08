@@ -1,7 +1,5 @@
-from fastapi import Depends
 from sqlalchemy.orm import Session
 
-from database.postgres_connection import get_postgres_db
 from models.user_model import User
 
 

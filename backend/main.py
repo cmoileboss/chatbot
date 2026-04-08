@@ -3,8 +3,12 @@ import fastapi
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 
+from routers.conversation_router import conversation_router
+from routers.message_router import message_router
+from routers.metadata_router import metadata_router
 from routers.user_router import user_router
 from routers.auth_router import auth_router
+
 from database.postgres_connection import Base, engine
 import models  # Assure l'import de tous les modèles
 
@@ -22,9 +26,14 @@ app.add_middleware(
 )
 
 app.include_router(auth_router)
-app.include_router(user_router)
+app.include_router(user_router, prefix="/users")
+app.include_router(conversation_router, prefix="/conversations")
+app.include_router(message_router, prefix="/messages")
+app.include_router(metadata_router, prefix="/metadata")
+
 
 def custom_openapi():
+    '''Personnalise le schéma OpenAPI pour inclure l'authentification par cookie.'''
     if app.openapi_schema:
         return app.openapi_schema
     schema = get_openapi(

@@ -2,6 +2,7 @@ from fastapi import HTTPException
 
 from sqlalchemy.orm import Session
 
+from schemas.user_update_request import UserUpdateRequest
 from enums.user_roles import UserRoles
 from models.user_model import User
 from repositories.user_repository import UserRepository
@@ -13,7 +14,7 @@ class UserService:
     def __init__(self):
         self.user_repository = UserRepository()
 
-    def get_all_users(self, db: Session):
+    def get_all_users(self, db: Session) -> list[User]:
         '''Get all users from the database
         Args:
             db: SQLAlchemy Session
@@ -21,7 +22,7 @@ class UserService:
             List[User]: A list of all user objects in the database'''
         return self.user_repository.get_all_users(db)
 
-    def get_user_by_id(self, user_id: int, current_user: User, db: Session):
+    def get_user_by_id(self, user_id: int, current_user: User, db: Session) -> User:
         '''Get a user by ID, checking that the current user is authorized to access it.
         Args:
             user_id (int): The ID of the user to retrieve.
@@ -40,7 +41,7 @@ class UserService:
             raise HTTPException(status_code=403, detail="Accès interdit")
         return user
     
-    def get_user_by_email(self, email: str, current_user: User, db: Session):
+    def get_user_by_email(self, email: str, current_user: User, db: Session) -> User:
         '''Get a user by email.
         Args:
             email (str): The email of the user to retrieve.
@@ -59,7 +60,7 @@ class UserService:
             raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
         return user
 
-    def get_user_by_username(self, username: str, current_user: User, db: Session):
+    def get_user_by_username(self, username: str, current_user: User, db: Session) -> User:
         '''Get a user by username.
         Args:
             username (str): The username of the user to retrieve.
@@ -78,7 +79,7 @@ class UserService:
             raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
         return user
     
-    def update_user(self, user_to_update: UserUpdateRequest, current_user: User, db: Session):
+    def update_user(self, user_to_update: UserUpdateRequest, current_user: User, db: Session) -> User:
         '''Update a user's information.
         Args:
             user_to_update (UserUpdateRequest): The updated user information.
@@ -103,7 +104,7 @@ class UserService:
 
         return self.user_repository.update_user(user, db)
     
-    def delete_user(self, id: int, current_user: User, db: Session):
+    def delete_user(self, id: int, current_user: User, db: Session) -> None:
         '''Delete a user by ID.
         Args:
             id (int): The ID of the user to delete.

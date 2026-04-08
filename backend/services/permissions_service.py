@@ -4,15 +4,8 @@ from fastapi.security import APIKeyCookie
 from sqlalchemy.orm import Session
 
 from jose import jwt, JWTError
-
 from datetime import datetime, timedelta, timezone
 from dotenv import load_dotenv
-import os
-
-from datetime import datetime, timedelta
-
-from dotenv import load_dotenv
-import jwt
 import os
 
 from enums.user_roles import UserRoles

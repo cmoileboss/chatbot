@@ -19,13 +19,13 @@ DB_NAME = os.getenv('NAME_POSTGRES_DB')
 # autoflush False : les modifications ne sont pas automatiquement envoyées à la base de données avant une requête.
 DATABASE_URL = f"postgresql://{USER}:{PASSWORD}@{SERVER}:{PORT}/{DB_NAME}"
 engine = create_engine(DATABASE_URL)
-postgresSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+PostgresSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 
 def get_postgres_db():
     '''Obtenir une session de base de données PostgreSQL'''
-    db = postgresSessionLocal()
+    db = PostgresSessionLocal()
     try:
         yield db
     finally:
