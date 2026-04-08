@@ -79,9 +79,10 @@ class UserService:
             raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
         return user
     
-    def update_user(self, user_to_update: UserUpdateRequest, current_user: User, db: Session) -> User:
+    def update_user(self, user_id: int, user_to_update: UserUpdateRequest, current_user: User, db: Session) -> User:
         '''Update a user's information.
         Args:
+            user_id (int): The ID of the user to update.
             user_to_update (UserUpdateRequest): The updated user information.
             current_user (User): The currently authenticated user.
             db: SQLAlchemy Session
@@ -90,17 +91,17 @@ class UserService:
         Raises:
             HTTPException 404: If the user is not found.
             HTTPException 403: If the current user is not allowed to update this user.'''
-        if current_user.role != UserRoles.ADMIN and user_to_update.id != current_user.id:
+        if current_user.role != UserRoles.ADMIN and user_id != current_user.id:
             raise HTTPException(status_code=403, detail="Accès interdit")
-        
-        user = self.user_repository.get_user_by_id(user_to_update.id, db)
+
+        user = self.user_repository.get_user_by_id(user_id, db)
         if user is None:
             raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
 
         user.username = user_to_update.username or user.username
         user.email = user_to_update.email or user.email
-        if user_to_update.password_hash:
-            user.set_password(user_to_update.password_hash)
+        if user_to_update.password:
+            user.set_password(user_to_update.password)
 
         return self.user_repository.update_user(user, db)
     
