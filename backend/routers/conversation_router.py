@@ -46,3 +46,11 @@ async def get_conversation_by_id(
     db: Session = Depends(get_postgres_db)
 ):
     return conversation_service.get_conversation_by_id(conversation_id, current_user, db)
+
+@conversation_router.delete("/{conversation_id}", status_code=204)
+async def delete_conversation(
+    conversation_id: int,
+    current_user: User = Depends(permissions_service.get_current_user),
+    db: Session = Depends(get_postgres_db)
+):
+    conversation_service.delete_conversation(conversation_id, current_user, db)
