@@ -1,0 +1,22 @@
+<div class="chat-container">
+  <div class="chat-messages">
+    @if (messages().length === 0) {
+      <div class="chat-empty">Posez votre première question...</div>
+    }
+    @for (message of messages(); track $index) {
+      <div class="message" [class.user]="message.role === 'user'" [class.assistant]="message.role === 'assistant'">
+        <span class="message-content">{{ message.content }}</span>
+      </div>
+    }
+  </div>
+
+  <div class="chat-input-row">
+    <textarea
+      [(ngModel)]="inputValue"
+      (keydown)="onKeydown($event)"
+      placeholder="Écrivez un message..."
+      rows="1"
+    ></textarea>
+    <button (click)="sendMessage()" [disabled]="!inputValue.trim()">Envoyer</button>
+  </div>
+</div>

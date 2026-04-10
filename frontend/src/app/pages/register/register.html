@@ -1,0 +1,57 @@
+<div class="register-container">
+  <div class="register-card">
+    <h1>Inscription</h1>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <div class="form-field">
+        <label for="username">Nom d'utilisateur</label>
+        <input
+          id="username"
+          type="text"
+          formControlName="username"
+          placeholder="johndoe"
+          autocomplete="username"
+        />
+        @if (registerForm.get('username')?.invalid && registerForm.get('username')?.touched) {
+          <span class="field-error">Nom d'utilisateur requis</span>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="vous@exemple.com"
+          autocomplete="email"
+        />
+        @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
+          <span class="field-error">Email invalide</span>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="password">Mot de passe</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="••••••••"
+          autocomplete="new-password"
+        />
+        @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+          <span class="field-error">Mot de passe requis</span>
+        }
+      </div>
+
+      @if (errorMessage()) {
+        <div class="error-banner">{{ errorMessage() }}</div>
+      }
+
+      <button type="submit" [disabled]="registerForm.invalid || isLoading()">
+        {{ isLoading() ? 'Inscription...' : "S'inscrire" }}
+      </button>
+    </form>
+  </div>
+</div>
