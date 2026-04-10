@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 
 from fastapi import HTTPException
 
+from enums.sender_role import SenderRole
 from enums.user_roles import UserRoles
 from models.message_model import Message
 from models.user_model import User
@@ -34,10 +35,10 @@ class MessageService:
         self._check_conversation_access(conversation_id, current_user, db)
         return self.message_repository.get_messages_by_conversation_id(conversation_id, db)
 
-    def create_message(self, conversation_id: int, content: str, current_user: User, db: Session) -> Message:
+    def create_message(self, conversation_id: int, role: SenderRole, content: str, current_user: User, db: Session) -> Message:
         '''Create a new message in a conversation.'''
         self._check_conversation_access(conversation_id, current_user, db)
-        message = Message(conversation_id=conversation_id, content=content)
+        message = Message(conversation_id=conversation_id, role=role, content=content)
         return self.message_repository.create_message(message, db)
 
     def get_message_by_id(self, message_id: int, current_user: User, db: Session) -> Message:
