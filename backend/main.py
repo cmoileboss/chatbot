@@ -3,6 +3,7 @@ import fastapi
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 
+from routers.ai_response_router import ai_response_router
 from routers.conversation_router import conversation_router
 from routers.message_router import message_router
 from routers.metadata_router import metadata_router
@@ -18,9 +19,14 @@ Base.metadata.create_all(bind=engine)
 
 app = fastapi.FastAPI()
 
+origins = [
+    "http://localhost:4200",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -30,7 +36,7 @@ app.include_router(user_router, prefix="/users")
 app.include_router(conversation_router, prefix="/conversations")
 app.include_router(message_router, prefix="/messages")
 app.include_router(metadata_router, prefix="/metadata")
-
+app.include_router(ai_response_router, prefix="/ai-response")
 
 def custom_openapi():
     '''Personnalise le schéma OpenAPI pour inclure l'authentification par cookie.'''

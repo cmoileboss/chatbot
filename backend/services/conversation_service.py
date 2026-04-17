@@ -63,3 +63,11 @@ class ConversationService:
         if current_user.role != UserRoles.ADMIN and current_user.id != conversation.user_id:
             raise HTTPException(status_code=403, detail="Vous n'avez pas la permission de supprimer cette conversation.")
         return self.conversation_repository.delete_conversation(conversation_id, db)
+    
+    def get_conversation_history(self, conversation_id: int, current_user: User, db: Session) -> list[dict]:
+        '''Get the conversation history as a list of {"role": "user"|"assistant", "content": str}'''
+        conversation = self.get_conversation_by_id(conversation_id, current_user, db)
+        return [
+            {"role": message.role.value, "content": message.content}
+            for message in conversation.messages
+        ]

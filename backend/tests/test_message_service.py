@@ -2,6 +2,7 @@ import pytest
 from unittest.mock import MagicMock
 from fastapi import HTTPException
 
+from enums.sender_role import SenderRole
 from enums.user_roles import UserRoles
 from models.conversation_model import Conversation
 from models.message_model import Message
@@ -23,10 +24,11 @@ def make_conversation(id: int, user_id: int) -> Conversation:
     return conv
 
 
-def make_message(id: int, conversation_id: int, content: str) -> Message:
+def make_message(id: int, conversation_id: int, role: SenderRole, content: str) -> Message:
     msg = MagicMock(spec=Message)
     msg.id = id
     msg.conversation_id = conversation_id
+    msg.role = role
     msg.content = content
     return msg
 
@@ -66,7 +68,7 @@ def user_conversation():
 
 @pytest.fixture
 def user_message(user_conversation):
-    return make_message(100, user_conversation.id, "Bonjour")
+    return make_message(100, user_conversation.id, SenderRole.USER, "Bonjour")
 
 
 # --- get_messages_by_conversation_id ---
@@ -112,7 +114,7 @@ class TestCreateMessage:
         message_service.conversation_repository.get_conversation_by_id.return_value = user_conversation
         message_service.message_repository.create_message.return_value = user_message
 
-        result = message_service.create_message(user_conversation.id, "Bonjour", regular_user, db)
+        result = message_service.create_message(user_conversation.id, SenderRole.USER, "Bonjour", regular_user, db)
 
         assert result == user_message
         message_service.message_repository.create_message.assert_called_once()
@@ -121,7 +123,7 @@ class TestCreateMessage:
         message_service.conversation_repository.get_conversation_by_id.return_value = user_conversation
 
         with pytest.raises(HTTPException) as exc:
-            message_service.create_message(user_conversation.id, "Bonjour", other_user, db)
+            message_service.create_message(user_conversation.id, SenderRole.USER, "Bonjour", other_user, db)
 
         assert exc.value.status_code == 403
 
@@ -129,7 +131,7 @@ class TestCreateMessage:
         message_service.conversation_repository.get_conversation_by_id.return_value = None
 
         with pytest.raises(HTTPException) as exc:
-            message_service.create_message(999, "Bonjour", regular_user, db)
+            message_service.create_message(999, SenderRole.USER, "Bonjour", regular_user, db)
 
         assert exc.value.status_code == 404
 

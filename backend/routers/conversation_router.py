@@ -37,6 +37,8 @@ async def get_conversations_for_user(
     current_user: User = Depends(permissions_service.get_current_user),
     db: Session = Depends(get_postgres_db)
 ):
+    if user_id == -1:
+        return None
     return conversation_service.get_conversations_for_user(user_id, current_user, db)
 
 @conversation_router.get("/{conversation_id}", status_code=200)
@@ -54,3 +56,12 @@ async def delete_conversation(
     db: Session = Depends(get_postgres_db)
 ):
     conversation_service.delete_conversation(conversation_id, current_user, db)
+
+@conversation_router.patch("/{conversation_id}", status_code=200)
+async def rename_conversation(
+    conversation_id: int,
+    request: ConversationCreationRequest,
+    current_user: User = Depends(permissions_service.get_current_user),
+    db: Session = Depends(get_postgres_db)
+):
+    return conversation_service.update_conversation(conversation_id, request.title, current_user, db)

@@ -1,22 +1,55 @@
-<div class="chat-container">
-  <div class="chat-messages">
-    @if (messages().length === 0) {
-      <div class="chat-empty">Posez votre première question...</div>
-    }
-    @for (message of messages(); track $index) {
-      <div class="message" [class.user]="message.role === 'user'" [class.assistant]="message.role === 'assistant'">
-        <span class="message-content">{{ message.content }}</span>
-      </div>
-    }
-  </div>
+<div class="chat-layout">
+  <aside class="sidebar-wrapper">
+    <app-conversations-list
+      [conversations]="conversations()"
+      [selectedId]="conversationId"
+      (conversationSelected)="selectConversation($event)"
+      (newConversation)="newConversation()"
+      (deleteConversation)="onDeleteConversation($event)"
+      (renameConversation)="onRenameConversation($event)"
+    />
+    <div class="sidebar-footer">
+      <span class="username">{{ authService.currentUser()?.username }}</span>
+      <button class="logout-btn" (click)="logout()">Déconnexion</button>
+    </div>
+  </aside>
 
-  <div class="chat-input-row">
-    <textarea
-      [(ngModel)]="inputValue"
-      (keydown)="onKeydown($event)"
-      placeholder="Écrivez un message..."
-      rows="1"
-    ></textarea>
-    <button (click)="sendMessage()" [disabled]="!inputValue.trim()">Envoyer</button>
-  </div>
+  <main class="chat-main">
+    <div class="messages-area" #messagesArea>
+      @if (messages().length === 0) {
+        <div class="empty-chat">
+          <p>Commencez une nouvelle conversation avec l'IA.</p>
+        </div>
+      }
+      @for (msg of messages(); track $index) {
+        <div class="message" [class.user]="msg.role === 'user'" [class.assistant]="msg.role === 'assistant'">
+          <div class="bubble">{{ msg.content }}</div>
+        </div>
+      }
+      @if (isLoading()) {
+        <div class="message assistant">
+          <div class="bubble typing">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (errorMessage()) {
+      <div class="error-banner">{{ errorMessage() }}</div>
+    }
+
+    <div class="input-area">
+      <textarea
+        [(ngModel)]="inputValue"
+        (keydown)="onKeydown($event)"
+        placeholder="Envoyer un message... (Entrée pour envoyer, Maj+Entrée pour saut de ligne)"
+        rows="1"
+        [disabled]="isLoading()"
+      ></textarea>
+      <button class="send-btn" (click)="sendMessage()" [disabled]="!inputValue.trim() || isLoading()">
+        Envoyer
+      </button>
+    </div>
+  </main>
 </div>

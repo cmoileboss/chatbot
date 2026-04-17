@@ -1,0 +1,39 @@
+<div class="sidebar" (click)="closeMenu()">
+  <div class="sidebar-header">
+    <span class="app-title">ChatBot</span>
+    <button class="new-btn" (click)="onNew()" title="Nouvelle conversation">+</button>
+  </div>
+
+  <ul class="conversation-list">
+    @for (conv of conversations; track conv.id) {
+      <li
+        class="conversation-item"
+        [class.active]="conv.id === selectedId"
+        (click)="select(conv)"
+      >
+        @if (renamingId() === conv.id) {
+          <input
+            class="rename-input"
+            [(ngModel)]="renameValue"
+            (keydown)="onRenameKeydown($event, conv)"
+            (blur)="confirmRename(conv)"
+            (click)="$event.stopPropagation()"
+            autofocus
+          />
+        } @else {
+          <span class="conv-title">{{ conv.title }}</span>
+          <button class="menu-btn" (click)="toggleMenu($event, conv.id)" title="Options">⋯</button>
+          @if (openMenuId() === conv.id) {
+            <div class="dropdown-menu" (click)="$event.stopPropagation()">
+              <button (click)="startRename($event, conv)">Renommer</button>
+              <button class="delete-action" (click)="onDelete($event, conv)">Supprimer</button>
+            </div>
+          }
+        }
+      </li>
+    }
+    @if (conversations.length === 0) {
+      <li class="empty-state">Aucune conversation</li>
+    }
+  </ul>
+</div>

@@ -1,0 +1,156 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #1e1e2e;
+  color: #cdd6f4;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #313244;
+}
+
+.app-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #cba6f7;
+}
+
+.new-btn {
+  background: #313244;
+  color: #cdd6f4;
+  border: none;
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  font-size: 1.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.new-btn:hover {
+  background: #45475a;
+}
+
+.conversation-list {
+  list-style: none;
+  margin: 0;
+  padding: 0.5rem;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.conversation-item {
+  position: relative;
+  padding: 0.6rem 0.875rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.conversation-item:hover {
+  background: #313244;
+}
+
+.conversation-item.active {
+  background: #45475a;
+}
+
+.conv-title {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.875rem;
+}
+
+.menu-btn {
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  color: #6c7086;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0 0.25rem;
+  border-radius: 4px;
+  line-height: 1;
+  opacity: 0;
+  transition: opacity 0.15s, background 0.15s;
+}
+
+.conversation-item:hover .menu-btn,
+.conversation-item.active .menu-btn {
+  opacity: 1;
+}
+
+.menu-btn:hover {
+  background: #585b70;
+  color: #cdd6f4;
+}
+
+.dropdown-menu {
+  position: absolute;
+  right: 0.5rem;
+  top: calc(100% - 4px);
+  background: #313244;
+  border: 1px solid #45475a;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  z-index: 100;
+  min-width: 130px;
+  overflow: hidden;
+}
+
+.dropdown-menu button {
+  display: block;
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: #cdd6f4;
+  padding: 0.55rem 1rem;
+  font-size: 0.875rem;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.dropdown-menu button:hover {
+  background: #45475a;
+}
+
+.dropdown-menu button.delete-action {
+  color: #f38ba8;
+}
+
+.dropdown-menu button.delete-action:hover {
+  background: rgba(243, 139, 168, 0.1);
+}
+
+.rename-input {
+  flex: 1;
+  background: #1e1e2e;
+  border: 1px solid #cba6f7;
+  border-radius: 6px;
+  color: #cdd6f4;
+  font-size: 0.875rem;
+  padding: 0.2rem 0.5rem;
+  outline: none;
+  width: 100%;
+}
+
+.empty-state {
+  padding: 1rem;
+  font-size: 0.8rem;
+  color: #6c7086;
+  text-align: center;
+}
