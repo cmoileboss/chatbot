@@ -24,4 +24,10 @@ export class MessageService {
       withCredentials: true,
     });
   }
+
+  deleteMessagesFrom(messageId: number): Observable<{ deleted: number }> {
+    return this.http.delete<{ deleted: number }>(`${this.apiUrl}/${messageId}/from-here`, {
+      withCredentials: true,
+    });
+  }
 }

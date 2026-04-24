@@ -56,3 +56,11 @@ class MessageService:
             raise HTTPException(status_code=404, detail="Message non trouvé")
         self._check_conversation_access(message.conversation_id, current_user, db)
         return self.message_repository.delete_message(message_id, db)
+
+    def delete_messages_from(self, message_id: int, current_user: User, db: Session) -> int:
+        '''Delete a message and all subsequent messages in the same conversation.'''
+        message = self.message_repository.get_message_by_id(message_id, db)
+        if message is None:
+            raise HTTPException(status_code=404, detail="Message non trouvé")
+        self._check_conversation_access(message.conversation_id, current_user, db)
+        return self.message_repository.delete_messages_from(message_id, message.conversation_id, db)

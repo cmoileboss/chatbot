@@ -54,3 +54,12 @@ async def delete_message(
     db: Session = Depends(get_postgres_db)
 ):
     return message_service.delete_message(message_id, current_user, db)
+
+@message_router.delete("/{message_id}/from-here", status_code=200)
+async def delete_messages_from(
+    message_id: int,
+    current_user: User = Depends(permissions_service.get_current_user),
+    db: Session = Depends(get_postgres_db)
+):
+    deleted = message_service.delete_messages_from(message_id, current_user, db)
+    return {"deleted": deleted}

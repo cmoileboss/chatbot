@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Enum, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Enum, Integer, DateTime, ForeignKey, Text
 from sqlalchemy.orm import relationship
 
 from datetime import datetime
@@ -13,7 +13,7 @@ class Message(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     conversation_id = Column(Integer, ForeignKey('conversations.id'), nullable=False)
     role = Column(Enum(SenderRole), nullable=False)
-    content = Column(String(500), nullable=False)
+    content = Column(Text, nullable=False)
     timestamp = Column(DateTime, default=datetime.now)
     
     conversation = relationship("Conversation", back_populates="messages")

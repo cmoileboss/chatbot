@@ -15,14 +15,97 @@
   </aside>
 
   <main class="chat-main">
+    <div class="chat-toolbar">
+      <label class="rag-toggle" title="Activer le RAG (recherche dans vos documents)">
+        <input type="checkbox" [(ngModel)]="ragEnabled" (ngModelChange)="ragEnabled && loadRagDocuments()" />
+        <span>Mode RAG</span>
+      </label>
+      @if (ragEnabled) {
+        <label class="upload-btn" title="Importer un document (PDF, DOCX, TXT, MD)">
+          <input type="file" accept=".pdf,.docx,.txt,.md" (change)="onFileUpload($event)" hidden />
+          📎 Importer
+        </label>
+        <button class="docs-btn" (click)="showDocuments = !showDocuments" title="Voir les documents indexés">
+          📄 Documents @if (ragDocuments().length > 0) { ({{ ragDocuments().length }}) }
+        </button>
+        <button class="reset-rag-btn" (click)="onResetDocuments()" title="Supprimer tous les documents RAG">🗑</button>
+        @if (uploadStatus()) {
+          <span class="upload-status">{{ uploadStatus() }}</span>
+        }
+      }
+      <div class="model-selector">
+        <select [(ngModel)]="selectedModel" (ngModelChange)="onModelChange($event)" [disabled]="availableModels().length === 0 || isPulling()">
+          @for (model of availableModels(); track model) {
+            <option [value]="model">{{ model }}</option>
+          }
+        </select>
+        <button class="pull-model-btn" (click)="showPullInput = !showPullInput; pullStatus.set(null)" title="Télécharger un nouveau modèle" [disabled]="isPulling()">+</button>
+      </div>
+      @if (showPullInput) {
+        <div class="pull-model-panel">
+          <input
+            list="model-suggestions"
+            [(ngModel)]="pullModelName"
+            placeholder="ex: gemma3:12b"
+            class="pull-model-input"
+            (keydown.enter)="onPullModel()"
+            [disabled]="isPulling()"
+          />
+          <datalist id="model-suggestions">
+            @for (m of suggestedModels; track m) {
+              <option [value]="m">{{ m }}</option>
+            }
+          </datalist>
+          <button class="pull-confirm-btn" (click)="onPullModel()" [disabled]="!pullModelName.trim() || isPulling()">
+            @if (isPulling()) { ⏳ } @else { Télécharger }
+          </button>
+        </div>
+        @if (pullStatus()) {
+          <span class="pull-status">{{ pullStatus() }}</span>
+        }
+      }
+    </div>
+
+    @if (showDocuments && ragEnabled) {
+      <div class="rag-documents-panel">
+        <div class="rag-documents-header">
+          <span>Documents indexés</span>
+          <button class="close-docs-btn" (click)="showDocuments = false">✕</button>
+        </div>
+        @if (ragDocuments().length === 0) {
+          <p class="no-docs">Aucun document indexé.</p>
+        } @else {
+          <table class="docs-table">
+            <thead>
+              <tr><th>Fichier</th><th>Chunks</th><th></th></tr>
+            </thead>
+            <tbody>
+              @for (doc of ragDocuments(); track doc.filename) {
+                <tr>
+                  <td class="doc-name" [title]="doc.filename">{{ doc.filename }}</td>
+                  <td class="doc-chunks">{{ doc.chunks }}</td>
+                  <td>
+                    <button class="doc-delete-btn" (click)="onDeleteRagDocument(doc.filename)" title="Supprimer ce document">🗑</button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </div>
+    }
+
     <div class="messages-area" #messagesArea>
       @if (messages().length === 0) {
         <div class="empty-chat">
-          <p>Commencez une nouvelle conversation avec l'IA.</p>
+          <p>Commencez une nouvelle conversation avec cmoilechatbotduboss.</p>
         </div>
       }
       @for (msg of messages(); track $index) {
         <div class="message" [class.user]="msg.role === 'user'" [class.assistant]="msg.role === 'assistant'">
+          @if (msg.id !== null) {
+            <button class="delete-msg-btn" (click)="onDeleteMessageFrom(msg.id!)" title="Supprimer ce message et les suivants">✕</button>
+          }
           <div class="bubble">{{ msg.content }}</div>
         </div>
       }

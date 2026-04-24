@@ -29,3 +29,15 @@ class MessageRepository:
             db.commit()
             return True
         return False
+
+    def delete_messages_from(self, message_id: int, conversation_id: int, db: Session) -> int:
+        '''Delete a message and all subsequent messages in the same conversation.
+        Returns the number of deleted messages.
+        '''
+        deleted = (
+            db.query(Message)
+            .filter(Message.conversation_id == conversation_id, Message.id >= message_id)
+            .delete(synchronize_session=False)
+        )
+        db.commit()
+        return deleted
