@@ -39,4 +39,6 @@ async def generate_chat_response(conversation_id: int, request: PromptRequest, c
     '''
     message_service.create_message(conversation_id, SenderRole.USER, request.prompt, current_user, db)
     history = conversation_service.get_conversation_history(conversation_id, current_user, db)
-    return local_ai_service.converse_llm(history)
+    ai_response = local_ai_service.converse_llm(history)
+    message_service.create_message(conversation_id, SenderRole.ASSISTANT, ai_response, current_user, db)
+    return ai_response
